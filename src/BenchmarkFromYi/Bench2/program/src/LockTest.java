@@ -43,7 +43,7 @@ public class LockTest {
 }
 
 
-class CThread extends Thread {
+class CThread extends Thread {//good thread
 
   private Lock lo;
   private int tNum;
@@ -56,7 +56,7 @@ class CThread extends Thread {
     this.depth = dep;
   }
 
-  public void doSomething() {
+  public void doSomething() { //balanced
     if (depth == 1) {
       try {
         lo.lock();
