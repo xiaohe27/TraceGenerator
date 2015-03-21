@@ -1,0 +1,8 @@
+1.compile:
+execute "compile" script in the current directory
+
+2.run:
+execute "run" script in the current directory
+
+3.program:
+3 threads calls function A(), B(), C() several times respectively. However, the call times are not equal which violates the property.
