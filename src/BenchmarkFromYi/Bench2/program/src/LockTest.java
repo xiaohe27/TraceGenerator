@@ -5,6 +5,22 @@ public class LockTest {
 
   public static int sum = 0;
 
+    class MyObj {
+        Lock lock;
+
+        public MyObj(Lock lock) {
+            this.lock = lock;
+        }
+        public Lock acquire() {
+            this.lock.lock();
+            return this.lock;
+        }
+        public Lock release() {
+            this.lock.unlock();
+            return this.lock;
+        }
+    }
+
   public static void main(String[] args) {
  
     int depth = Integer.parseInt(args[0]);
