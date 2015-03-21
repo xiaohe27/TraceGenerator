@@ -3,3 +3,5 @@ src/agent.jar
 src/*.csv
 src/*err
 *.class
+.idea/*
+out/*
