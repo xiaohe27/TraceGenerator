@@ -56,7 +56,6 @@ public aspect EqualityCheckMonitorAspect implements com.runtimeverification.rvmo
 	pointcut EqualityCheck_c(MyObj o) : (call(* MyObj.C()) && target(o)) && MOP_CommonPointCut();
 	after (MyObj o) : EqualityCheck_c(o) {
 		EqualityCheckRuntimeMonitor.cEvent(o);
-		System.out.print("c, " + System.identityHashCode(o) + "\r\n");
 	}
 
 }

@@ -10,7 +10,7 @@ import pgm.*;
 EqualityCheck(MyObj o) {
         
 	event done after(MyObj o) :
-		execution(* done(..))
+		execution(* SRSTest.main(..))
         && target(o) {}
 
 	event a after(MyObj o) :

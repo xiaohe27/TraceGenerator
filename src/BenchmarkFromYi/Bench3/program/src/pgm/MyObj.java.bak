@@ -17,6 +17,4 @@ public class MyObj {
 
     }
 
-	public void done() {}
-
 }

@@ -1,6 +1,5 @@
 package mop;
 
-import pgm.*;
 import java.util.*;
 import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
 import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
@@ -10,39 +9,24 @@ import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
  * may casue deadlock and the program may not terminate. Although the program is non-derministic,
  * but the veridict is deterministic. And the program will exit when the property is violated. */ 
 
-Safe_ALock(ALock l, AThread t) {
-	private ALock lock;
-	private AThread thread;
-
+Safe_Lock(Lock l, Thread t) {
 	int acquire_count , release_count;
 
-	event acquire after(ALock l, AThread t):
-		call(* AThread.acquire(ALcok))&&
+	event acquire after(Lock l, Thread t):
+		call(* Lock.lock())&&
+		target(l)&&thread(t){ ++acquire_count; }
 
-		target(t) && args(l) { 
-		this.lock = l;
-		this.thread = t;
-		++acquire_count; }
+	event release after(Lock l, Thread t):
+		call(* Lock.unlock())&&
+		target(l)&&thread(t){ ++release_count; }
 
-	event release after(ALock l, AThread t):
-		call(* AThread.release())&&
-		target(t) && args(l){ 
-		this.lock = l;
-		this.thread = t;
-		++release_count; }
+	event begin before(Thread t):
+		execution(* *.*(..))&&
+		thread(t)&&!within(Lock+){}
 
-	event begin after(AThread t):
-		call(* AThread.begin(..))&&
-		target(t) {
-		this.lock = l;
-		this.thread = t;
-		}
-
-	event end after(AThread t):
-		call(* AThread.end(..))&&
-		target(t) {		
-		this.lock = l;
-		this.thread = t;}
+	event end after(Thread t):
+		execution(* *.*(..))&&
+		thread(t)&&!within(Lock+){}
  
 	cfg: S -> S begin S end 
 		| S acquire S release 
@@ -52,9 +36,6 @@ Safe_ALock(ALock l, AThread t) {
         @fail {
 		if ( acquire_count > release_count ) {
         		RVMLogging.out.println("too few releases of lock");
-                	System.exit(-1);
-		} else if ( acquire_count < release_count ) {
-        		RVMLogging.out.println("too many releases of lock");
                 	System.exit(-1);
 		}
         }

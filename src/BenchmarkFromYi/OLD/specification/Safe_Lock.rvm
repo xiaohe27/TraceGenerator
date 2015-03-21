@@ -1,0 +1,30 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+Safe_Lock(Lock l, Thread t) {
+
+	int acquire_count, release_count;
+	event acquire(Lock l, Thread t){
+		++acquire_count;
+	}
+	event release(Lock l, Thread t){
+		++release_count;
+	}
+	event begin(Thread t){
+	}
+	event end(Thread t){
+	}
+	cfg:  S -> S begin S end
+	| S acquire S release
+	| epsilon
+
+	@fail
+	{
+		if (acquire_count > release_count) {
+			RVMLogging.out.println("too few releases of lock");
+			System.exit(-1);
+		}
+	}
+}
