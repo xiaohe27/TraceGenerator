@@ -1,0 +1,39 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+import pgm.*;
+EqualityCheck(MyObj o) {
+	event done(MyObj o){
+	}
+	event a(MyObj o){
+	}
+	event b(MyObj o){
+	}
+	event c(MyObj o){
+	}
+	srs:
+	b a -> a b .
+	c a -> a c .
+	c b -> b c .
+	a b -> E .
+	E b -> b E .
+	E a -> a E .
+	E c -> #epsilon .
+	c E -> #epsilon .
+	^ done -> #succeed .
+	a done -> #fail .
+	b done -> #fail .
+	c done -> #fail .
+	E done -> #fail .
+
+	@fail
+	{
+		System.out.println("The call times of A(), B(), C() are not equal");
+	}
+	@succeed
+	{
+		System.out.println("workded!");
+	}
+}

@@ -3,13 +3,15 @@ package mop;
 import java.util.*;
 import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
 import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+import pgm.*;
 
 /*This property checks whether functions A(), B(), C() are called equal times*/
 
 EqualityCheck(MyObj o) {
         
 	event done after() :
-		execution(* main(..)) {}
+		execution(* SRSTest.main(..))
+        && target(o) {}
 
 	event a after(MyObj o) :
 		call(* MyObj.A())
@@ -32,10 +34,11 @@ EqualityCheck(MyObj o) {
       	  E a -> a E .
        	  E c -> #epsilon .
       	  c E -> #epsilon .
-      	  ^ done -> #succeed .
+          ^ done -> #succeed .
       	  a done -> #fail .
       	  b done -> #fail .
       	  c done -> #fail .
+          E done -> #fail .
 
 	@succeed{
 	  System.out.println("workded!");	
