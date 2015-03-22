@@ -8,7 +8,7 @@ public class SafeLock {
     
         int depth = 5;
         int outer = 100;
-        int inner = 1000;
+        int inner = 4000;
         int threadNum = 50;
 
 	if(args.length == 4) {

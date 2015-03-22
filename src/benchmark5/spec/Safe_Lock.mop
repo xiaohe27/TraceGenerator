@@ -1,0 +1,44 @@
+package mop;
+import pgm.*;
+
+/* A thread should release a lock as many times as it acquires the lock. Otherwise it
+ * may casue deadlock and the program may not terminate. Although the program is non-derministic,
+ * but the veridict is deterministic. And the program will exit when the property is violated. */ 
+
+Safe_Lock(ALock l, AThread t) {
+	int acquire_count , release_count;
+
+	event acquire after(ALock l, AThread t):
+		call(* AThread.acquire(ALock))&&
+		target(t)&&args(l){ ++acquire_count; }
+
+	event release after(ALock l, AThread t):
+		call(* AThread.release(ALock))&&
+		target(t)&&args(l){ ++release_count; }
+
+	event begin after(AThread t):
+		call(* AThread.begin())
+		&& target(t){}
+
+	event end after(AThread t):
+		call(* AThread.end())&&
+		target(t) {}
+ 
+	cfg: S -> S begin S end 
+		| S acquire S release 
+		| epsilon
+         
+
+        @fail {
+		if ( acquire_count > release_count ) {
+        		System.err.println("too few releases of lock");
+                	System.exit(-1);
+		}
+
+		if ( acquire_count < release_count ) {
+        		System.err.println("too many releases of lock");
+                	System.exit(-1);
+		}
+        }
+}
+

@@ -1,0 +1,42 @@
+package mop;
+
+import pgm.*;
+Safe_Lock(ALock l, AThread t) {
+	ALock lock;
+	AThread thread;
+
+	int acquire_count, release_count;
+	event acquire(ALock l, AThread t){
+		this.lock = l;
+		this.thread = t;
+		++acquire_count;
+	}
+	event release(ALock l, AThread t){
+		this.lock = l;
+		this.thread = t;
+		++release_count;
+	}
+	event begin(AThread t){
+		this.thread = t;
+	}
+	event end(AThread t){
+		this.thread = t;
+	}
+	cfg:  S -> S begin S end
+	| S acquire S release
+	| epsilon
+
+	@fail
+	{
+		if (acquire_count > release_count) {
+			System.err.println("too few releases of lock " + System.identityHashCode(this.lock)
+					+ " in thread " + System.identityHashCode(this.thread));
+			System.exit(-1);
+		}
+		if (acquire_count < release_count) {
+			System.err.println("too many releases of lock " + System.identityHashCode(this.lock)
+					+ " in thread " + System.identityHashCode(this.thread));
+			System.exit(-1);
+		}
+	}
+}
