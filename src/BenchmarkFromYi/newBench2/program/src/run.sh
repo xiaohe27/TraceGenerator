@@ -10,5 +10,5 @@ rm -r classes/pgm
 mv agent.jar ..
 cd ..
 
-//java -javaagent:agent.jar -d64 -Xms512m -Xmx4g pgm.SafeLock 1> trace.csv 2> err
+java -javaagent:agent.jar -d64 -Xms512m -Xmx4g pgm.SafeLock $1 $2 $3 $4 1> trace.csv 2> err
 
