@@ -1,0 +1,32 @@
+package mop;
+
+import pgm.*;
+Safe_Lock(ALock l, AThread t) {
+
+	int acquire_count, release_count;
+	event acquire(ALock l, AThread t){
+		++acquire_count;
+	}
+	event release(ALock l, AThread t){
+		++release_count;
+	}
+	event begin(AThread t){
+	}
+	event end(AThread t){
+	}
+	cfg:  S -> S begin S end
+	| S acquire S release
+	| epsilon
+
+	@fail
+	{
+		if (acquire_count > release_count) {
+			System.err.println("too few releases of lock");
+			System.exit(-1);
+		}
+		if (acquire_count < release_count) {
+			System.err.println("too many releases of lock");
+			System.exit(-1);
+		}
+	}
+}

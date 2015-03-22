@@ -1,105 +1,22 @@
 package pgm;
-// a crafted lock class
-class ALock {
-
-    public int counter;
-    
-    public String name;
-
-    public ALock(String lockname) {
-       counter = 0;
-       name = lockname;
-    }
-
-    public void inc() {
-       counter++;
-    }
-  
-    public void dec() {
-       counter--;
-    }
-}
-
-// a crafted thread class
-class AThread {
-
-    public int sum_aim;
-    
-    public String name;
-
-    public AThread(String threadname, int aim) {
-        sum_aim = aim;
-        name = threadname;
-    }
-
-    private void begin() {
-
-    }
-
-    private void end() {
-
-    }
-
-    private void acquire(ALock l){
-        l.inc();
-    }
-
-    private void release(ALock l){
-        l.dec();
-    }
-
-    private void checkLock(ALock l) {
-       if(l.counter > 0) {
-           System.out.println("Thead " + name + " FAILED:Lock " + l.name + " is accquired more times");
-       } else if ( l.counter < 0) {
-           System.out.println("Thread " + name + " FAILED:Lock " + l.name + " is released more times");
-       } else {
-           System.out.println("Thread " + name + " SUCCEEDED:Lock " + l.name + " is accuqired and released equivalent times");
-       }
-    }
-
-    private int doCalc(){
-        int sum = 0;
-        if ( sum_aim > 0) {
-            for( int i = 1; i <= sum_aim; i++) {
-                sum += i;
-            }
-        }
-        return sum;
-    }
-
-    public void doSomethingHelper(ALock l, int depth) {
-        if ( depth == 0) {
-            int result = doCalc();
-            System.out.println("Sum is :" + result);
-        } else {
-            this.acquire(l);
-            doSomethingHelper(l, depth - 1);
-            this.release(l);
-        }
-    }
-
-    public void doSomething(ALock l, int depth, boolean good) {
-        begin();
-        doSomethingHelper(l, depth);
-        if (!good){
-            this.release(l);
-        }
-        checkLock(l);
-        end();
-    }
-
-}
-
 
 public class SafeLock {
 
     public static void main(String[] args) {
+
+	System.out.print("event, ALock, AThread\r\n");
     
         int depth = 100;
         int outer = 100;
         int inner = 1000;
         int threadNum = 50;
+
+	if(args.length == 4) {
+	    depth = Integer.parseInt(args[0]);
+	    outer = Integer.parseInt(args[1]);
+	    inner = Integer.parseInt(args[2]);
+	    threadNum = Integer.parseInt(args[3]);
+	}
 
         for(int i = 0; i <= outer; i++) {
             String l1name = "Lock_O#" + Integer.toString(i);
