@@ -1,0 +1,29 @@
+package code3;
+
+import common.GoodTest;
+
+/**
+ * Created by xiaohe on 3/16/15.
+ */
+public class Good extends GoodTest {
+
+
+    @Override
+    public void run1() { //hasnexttrue next
+        
+
+    }
+
+    @Override
+    public void run2() { //hasnexttrue hasnexttrue next
+        
+
+    }
+
+    @Override
+    public void run3() { // hasnexttrue hasNextFalse from another obj, then next
+       
+    }
+
+
+}

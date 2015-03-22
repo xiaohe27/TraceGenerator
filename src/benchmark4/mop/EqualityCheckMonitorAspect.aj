@@ -2,12 +2,12 @@ package mop;
 import java.util.*;
 import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
 import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+import code4.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.*;
 import java.lang.ref.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.aspectj.lang.*;
-import pgm.*;
 
 aspect BaseAspect {
 	pointcut notwithin() :
@@ -34,10 +34,10 @@ public aspect EqualityCheckMonitorAspect implements com.runtimeverification.rvmo
 	static Condition EqualityCheck_MOPLock_cond = EqualityCheck_MOPLock.newCondition();
 
 	pointcut MOP_CommonPointCut() : !within(com.runtimeverification.rvmonitor.java.rt.RVMObject+) && !adviceexecution() && BaseAspect.notwithin();
-	pointcut EqualityCheck_done() : (execution(* main(..))) && MOP_CommonPointCut();
-	after () : EqualityCheck_done() {
-		EqualityCheckRuntimeMonitor.doneEvent();
-		System.out.print("done, \r\n");
+	pointcut EqualityCheck_done(MyObj o) : (execution(* done(..)) && target(o)) && MOP_CommonPointCut();
+	after (MyObj o) : EqualityCheck_done(o) {
+		EqualityCheckRuntimeMonitor.doneEvent(o);
+		System.out.print("done, " + System.identityHashCode(o) + "\r\n");
 	}
 
 	pointcut EqualityCheck_a(MyObj o) : (call(* MyObj.A()) && target(o)) && MOP_CommonPointCut();
@@ -57,4 +57,5 @@ public aspect EqualityCheckMonitorAspect implements com.runtimeverification.rvmo
 		EqualityCheckRuntimeMonitor.cEvent(o);
 		System.out.print("c, " + System.identityHashCode(o) + "\r\n");
 	}
+
 }
