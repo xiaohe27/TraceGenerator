@@ -11,7 +11,7 @@ rv-monitor -d classes/mop -s *.rvm
 javac -cp "$CLASSPATH:../" classes/mop/*.java
 rm classes/mop/*.java
 
-javamopagent -cp "$CLASSPATH:../" *.aj classes
+javamopagent *.aj classes
 
 mv agent.jar ../..
 cd ../..

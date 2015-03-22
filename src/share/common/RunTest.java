@@ -41,6 +41,12 @@ public class RunTest {
                 bt = new code3.Bad();
                 header = "event, Iterator, bool\r\n";
                 break;
+
+            case 4 :
+                gt = new code4.Good();
+                bt = new code4.Bad();
+                header = "event, MyObj\r\n";
+                break;
         }
 
         TraceGen traceGen = new TraceGen(numOfRounds, numOfViolationsCandidates, gt, bt);
