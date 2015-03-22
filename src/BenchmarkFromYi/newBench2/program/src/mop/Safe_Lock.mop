@@ -1,6 +1,5 @@
 package mop;
-
-import java.util.*;
+import pgm.*;
 import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
 import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
 
@@ -9,24 +8,24 @@ import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
  * may casue deadlock and the program may not terminate. Although the program is non-derministic,
  * but the veridict is deterministic. And the program will exit when the property is violated. */ 
 
-Safe_Lock(Lock l, Thread t) {
+Safe_Lock(ALock l, AThread t) {
 	int acquire_count , release_count;
 
-	event acquire after(Lock l, Thread t):
-		call(* Lock.lock())&&
+	event acquire after(ALock l, AThread t):
+		call(* ALock.lock())&&
 		target(l)&&thread(t){ ++acquire_count; }
 
-	event release after(Lock l, Thread t):
-		call(* Lock.unlock())&&
+	event release after(ALock l, AThread t):
+		call(* ALock.unlock())&&
 		target(l)&&thread(t){ ++release_count; }
 
-	event begin before(Thread t):
+	event begin before(AThread t):
 		execution(* *.*(..))&&
-		thread(t)&&!within(Lock+){}
+		thread(t)&&!within(ALock+){}
 
-	event end after(Thread t):
+	event end after(AThread t):
 		execution(* *.*(..))&&
-		thread(t)&&!within(Lock+){}
+		thread(t)&&!within(ALock+){}
  
 	cfg: S -> S begin S end 
 		| S acquire S release 
