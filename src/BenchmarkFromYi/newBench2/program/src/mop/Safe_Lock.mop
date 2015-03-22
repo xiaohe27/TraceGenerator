@@ -1,8 +1,5 @@
 package mop;
 import pgm.*;
-import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
-import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
-
 
 /* A thread should release a lock as many times as it acquires the lock. Otherwise it
  * may casue deadlock and the program may not terminate. Although the program is non-derministic,
@@ -12,20 +9,20 @@ Safe_Lock(ALock l, AThread t) {
 	int acquire_count , release_count;
 
 	event acquire after(ALock l, AThread t):
-		call(* ALock.lock())&&
-		target(l)&&thread(t){ ++acquire_count; }
+		call(* AThread.acquire(ALock))&&
+		target(t)&&args(l){ ++acquire_count; }
 
 	event release after(ALock l, AThread t):
-		call(* ALock.unlock())&&
-		target(l)&&thread(t){ ++release_count; }
+		call(* AThread.release(ALock))&&
+		target(t)&&args(l){ ++release_count; }
 
-	event begin before(AThread t):
-		execution(* *.*(..))&&
-		thread(t)&&!within(ALock+){}
+	event begin after(AThread t):
+		call(* AThread.begin())
+		&& target(t){}
 
 	event end after(AThread t):
-		execution(* *.*(..))&&
-		thread(t)&&!within(ALock+){}
+		call(* AThread.end())&&
+		target(t) {}
  
 	cfg: S -> S begin S end 
 		| S acquire S release 
@@ -34,7 +31,12 @@ Safe_Lock(ALock l, AThread t) {
 
         @fail {
 		if ( acquire_count > release_count ) {
-        		RVMLogging.out.println("too few releases of lock");
+        		System.err.println("too few releases of lock");
+                	System.exit(-1);
+		}
+
+		if ( acquire_count < release_count ) {
+        		System.err.println("too many releases of lock");
                 	System.exit(-1);
 		}
         }
